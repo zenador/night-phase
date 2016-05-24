@@ -1,0 +1,81 @@
+<template name="ruleContent">
+<div id="ruleContent" class="textContent">
+
+<h5>Before the game</h5>
+
+You should start a new game, and give the access code to the other players to join the game. You can open or close the game room to new players.<br><br>
+
+You can add dummy players for those who don't have their own device, and those players can view their info on your device. This works only for the initial assigning of roles, and doesn't work well with games that involve role swapping or submission of choices (e.g. voting). Dummy players may also be used under some circumstances to bury cards (to be out of the game entirely, or for the 'drunk' role that remembers his true role only later on) or as center cards that don't belong to anyone, but this is better for games where the sharing of who's who is not handled through the app.<br><br>
+
+You can select a pre-defined game template (from games with free PnP or digital versions, or other games that can use this app for role assignation only), or create your own (you can save it to your own device as a text file to copy and paste for later use). For each of the following boxes, you can choose to display it to all other players.<br><br>
+
+<strong>You will probably want to replace the text in {braces}, but leave the ones in &lt;chevrons&gt; alone.</strong><br><br>
+
+<h6>Roles</h6>
+
+Each line represents one role, in the format:<br>
+[ID], [Name], [What does this role know], [Description], [Count]<br><br>
+
+ID: Put any positive integer, as long as it is unique to each role<br>
+Name: Name of the role. If there is a moderator role that must be assigned to the game host, put &lt;Host&gt; in the name<br>
+What does this role know: Put the IDs of the roles that this role knows. Separate the IDs with dashes if those roles are indistinguishable (e.g. Avalon: Percival does not know which is Merlin or Morgana), and with spaces otherwise (e.g. Avalon: Evil players know exactly who is Evil Lancelot)<br>
+Description: Explanatory text shown to the player with the role<br>
+Count: Number of players with this role in the game<br><br>
+
+Once the roles are properly written out, you can 'Switch Mode' to adjust role counts easily.<br><br>
+
+<h6>Stacks</h6>
+
+Ignore this section if the game has straightforward role card distribution.<br><br>
+
+Otherwise, you need to use stacks. Describe them at the start of the role box (stacks don't have their own box as it is integrated with the roles), with each line representing one stack, in the format:<br>
+[Stack Name], [Stack Content], [Stack Count]<br><br>
+
+For the stack content, use the IDs of the normal roles in a JSON list. You can embed lists within other lists, or use these formats:<br>
+[Item], [Number], 'm' -&gt; multiplies the instances of the item, e.g. [1, 3, 'm'] -&gt; [1, 1, 1]<br>
+[List], [Number], 'c' -&gt; randomly selects a number of groups from the list, e.g. [[[1, 2], [3, 4], [5, 6]], 2, 'c'] -&gt; [[1, 2], [5, 6]]<br>
+[List], [Number], 'ci' -&gt; randomly selects a number of individual items from the list, e.g. [[[1, 2], [3, 4], [5, 6]], 2, 'c'] -&gt; [2, 5]<br>
+<br>
+
+The stack count will be the number of roles randomly drawn from the stack. When using stacks, the normal roles should have 0 as the count to avoid duplicates.<br><br>
+
+Use a line with only --- as the separator before the normal list of roles.<br><br>
+
+<h6>Ballots</h6>
+
+For games that have a voting or mission phase. Each line represents one phase, in the format:<br>
+[Name], [Choices separated by /], [Type]<br><br>
+
+You can put &lt;Players&gt; in choices to use the list of all players in the game.<br><br>
+
+Type:<br>
+0 - Secret voting. Only the number of votes are shown during the voting phase, and afterwards only the results (without player names) are shown.<br>
+1 - Semi-secret voting. Shows the names of who voted, but not who voted what.<br>
+2 - Open voting. Shows who voted what.<br><br>
+
+<h6>Themes</h6>
+
+For games that have a random element. Put the list of choices separated by newlines here, and put &lt;&gt; as the role name in the Roles box (e.g. Spyfall). Each game, one theme will be randomly selected from the choices.<br><br>
+
+<h5>During the game</h5>
+
+You can 'Display Open Info', then type some text in the Open Information box (public info shown to all players) as a record of game progress.<br><br>
+
+You can 'Start Secret Voting' so everyone can cast their choices in secret, then end it when everyone is ready, or restart it if someone cast a choice by mistake.<br><br>
+
+You can 'Display Random Box' to select a random player.<br><br>
+
+You can 'Display Sound Box' so players can play a sound on the host's device (so no one knows who did it) 2 seconds after they tap the button. Useful for games where everyone goes to sleep while a certain role takes their night action, to signify when they're done.<br><br>
+
+You can 'Display Player List' to show the game's access code and the list of players. This list is automatically hidden when a game starts and automatically displayed when preparing a new game. In that list, you can mark players as dead. Dead players are not allowed to submit choices in the voting box.<br><br>
+
+You can 'Allow Swapping' or 'Allow Peeking' (of roles) in games that require it. The functionality is shown in the player list, so make sure to display that box.<br><br>
+
+You can 'Display Log' to show who swapped or peeked at roles during the game. It's best to keep this hidden during the game, and to show it afterwards to trace the history and ensure that no one cheated or made a mistake.<br><br>
+
+For the chat, you can 'Allow Send Message as Role' to let players send messages using their role name instead of their player name (careful!), and 'Allow Send Message to Host' to let players send private messages directly to you.<br><br>
+
+When the game is over, you can click 'End Game' to show everyone the list of who's who. When you're ready to start a new game, you can click 'Prepare Game' to go to the game setup page (with your last used settings), and configure it as you wish before starting.
+
+</div>
+</template>

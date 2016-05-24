@@ -1,0 +1,478 @@
+<head>
+	<title>Night Phase</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+
+<body><div id="overlay"></div></body>
+
+<template name="main">
+<div id="main">
+	{{> flashMessages}}
+	{{> tooltips}}
+	{{> Template.dynamic template=whichView}}
+	{{> ruleBox}}
+	{{> footer}}
+</div>
+</template>
+
+<template name="startMenu">
+<div id="startMenu">
+	<h2>{{_ "ui.title.game title" }}</h2>
+	{{_ "ui.title.game subtitle" }}<br><br>
+
+	<input type="text" id="playerName" name="playerName" placeholder='{{_ "ui.form.player name.placeholder" }}' value='{{playerName}}'>
+	<input autocorrect="off" autocapitalize="off" type="text" id="accessCode" name="accessCode" placeholder='{{_ "ui.form.access code.placeholder" }}' value='{{accessCode}}'>
+	<div class="buttonrow">
+		<button id="newgame" class="btn btn-success">{{_ "ui.button.start menu.new game" }}</button>
+		<button id="joingame" class="btn btn-info">{{_ "ui.button.start menu.join game" }}</button>
+		{{#if canResume}}
+			<button id="resumegame" class="btn btn-warning">{{_ "ui.button.start menu.resume game" }}</button>
+		{{/if}}
+	</div>
+	OR<br><br>
+	<input autocorrect="off" autocapitalize="off" type="text" id="playerAccessCode" name="playerAccessCode" placeholder='{{_ "ui.form.player access code.placeholder" }}' value='{{playerAccessCode}}'>
+	<button id="rejoingame" class="btn btn-warning">{{_ "ui.button.start menu.rejoin game" }}</button>
+</div>
+</template>
+
+<template name="lobby">
+<div id="lobby">
+	{{#if isGameState 'inProgress'}}
+	
+		{{> infoBox}}
+		{{> dummyBoxes}}
+		{{> openInfo}}
+		{{> choiceBox}}
+		{{> timeBox}}
+		{{> randomBox}}
+		{{> soundBox}}
+
+	{{/if}}
+
+	{{#if isGameState 'over'}}
+
+		<h5>{{_ "ui.title.game over" }}</h5>
+		<h6>{{_ "ui.title.original list" }}</h6>
+		{{{endGameList}}}<br>
+
+	{{/if}}
+	
+	{{> playerList}}
+
+	{{#if isGameState 'waitingForPlayers'}}
+
+		{{#if isHost}}
+			{{> gameOptions}}
+		{{else}}
+			{{> gameInfo}}
+		{{/if}}
+
+	{{/if}}
+
+	{{> chat}}
+	{{> log}}
+	{{> gameMenu}}
+	{{> hostDisplayBox}}
+</div>
+</template>
+
+<template name="accessCode">
+<div class="accessCode">
+	{{_ "ui.title.access code" }}: {{accessCode}} <a href="game/{{accessCode}}">{{_ "ui.label.access link" }}</a>
+	<br>
+	{{_ "ui.title.player access code" }}: {{playerAccessCode}}
+	<br>
+	<a href="http://telegram.me/NightPhaseBot" target="_blank">{{_ "ui.label.telegram link" }}</a>
+</div>
+</template>
+
+<template name="playerList">
+{{#unless hidePlayerList}}
+{{> accessCode}}
+<div class="playerList">
+	<button id="toggleAccess" class="btn btn-warning">{{_ "ui.button.game menu.hide access" }}</button>
+	{{_ "ui.title.players" }} ({{numPlayers}}):
+	<ul>
+	{{#each players}}
+		<li>
+			{{this.name}}
+			{{#if isYou this._id}}({{_ "ui.player info.you"}}){{/if}}
+			{{#if equals this.isHost true}}({{_ "ui.player info.host"}}){{/if}}
+			{{#if equals this.isDead true}}({{_ "ui.player info.dead"}}){{/if}}
+			{{#if isGameState 'over'}}
+				{{this.roleName}}
+			{{/if}}
+			{{#if this.telegram}}({{_ "ui.player info.teleconnected"}}){{/if}}
+			{{#unless isGameState 'waitingForPlayers'}}{{#if this.openInfo}}
+				: {{this.openInfo}}
+			{{/if}}{{/unless}}
+			{{#if isHost}}
+				{{#if equals this.isHost false}}
+					<button class="removePlayer btn btn-info compressed" data-playerId="{{this._id}}" data-playerName="{{this.name}}">x</button>
+					{{#if equals this.isDummy false}}
+						<button class="transferHost btn btn-info compressed" data-playerId="{{this._id}}" data-playerName="{{this.name}}">(&lt;-)</button>
+					{{else}}
+						{{_ "ui.title.player access code" }}: {{this.accessCode}}
+					{{/if}}
+				{{/if}}
+				{{#if isGameState 'inProgress'}}
+					<button class="togglePlayerDeathState btn btn-info compressed" data-playerId="{{this._id}}" data-playerName="{{this.name}}">{{_ "ui.button.game menu.toggle player death state"}}</button>
+				{{/if}}
+			{{/if}}
+		</li>
+	{{/each}}
+	</ul>
+	{{#if isHost}}
+		<input type="text" id="dummyPlayerName" name="dummyPlayerName" placeholder='{{_ "ui.form.dummy player name.placeholder" }}'>
+		<button class="addDummyPlayer btn btn-info compressed">+</button><br>
+		<button id="lockGameRoom" class="btn btn-info">{{#if roomIsLocked}}{{_ "ui.game info.locked"}}{{else}}{{_ "ui.game info.open"}}{{/if}}</button>
+	{{/if}}
+	{{#if isGameState 'inProgress'}}
+		<br><br>
+		<input type="text" id="playerOpenInfo" name="playerOpenInfo" placeholder='{{_ "ui.form.player open info.placeholder" }}' value='{{this.openInfo}}'><button id="updatePlayerOpenInfo" class="btn btn-warning">{{_ "ui.button.game menu.update"}}</button><br>
+
+		{{#unless preventSwapping}}
+			<select id="playerToSwap1">
+				{{#each players}}
+					{{#if isYou this._id}}
+						<option value="{{this._id}}" selected>{{this.name}}</option>
+					{{else}}
+						<option value="{{this._id}}">{{this.name}}</option>
+					{{/if}}
+				{{/each}}
+			</select>
+
+			<select id="playerToSwap2">
+				{{#each players}}
+					{{#if isYou this._id}}
+						<option value="{{this._id}}" selected>{{this.name}}</option>
+					{{else}}
+						<option value="{{this._id}}">{{this.name}}</option>
+					{{/if}}
+				{{/each}}
+			</select>
+
+			<button id="swapPlayerRoles" class="btn btn-warning">{{_ "ui.button.game menu.swap roles"}}</button><br>
+		{{/unless}}
+
+		{{#unless preventPeeking}}
+			<select id="playerToPeek">
+				{{#each players}}
+					<option value="{{this._id}}">{{this.name}}</option>
+				{{/each}}
+			</select>
+
+			<button id="peekPlayerRole" class="btn btn-warning">{{_ "ui.button.game menu.peek role"}}</button>
+		{{/unless}}
+	{{/if}}
+</div>
+{{/unless}}
+</template>
+
+<template name="gameMenu">
+	<div class="buttonrow">
+		{{#if isHost}}
+			{{#if isGameState 'inProgress'}}
+				<button class="btn btn-danger endgame ingame" data-clickcount="0">&#9632; {{_ "ui.button.game menu.end game" }}</button>
+			{{else}} {{#if isGameState 'over'}}
+				<button class="btn btn-danger preparegame ingame">{{_ "ui.button.game menu.prepare game" }}</button>
+			{{else}} {{#if isGameState 'waitingForPlayers'}}
+				<button id="startgame" class="btn btn-success">{{_ "ui.button.game menu.start game" }}</button>
+			{{/if}} {{/if}} {{/if}}
+		{{/if}}
+
+		{{#if isGameState 'waitingForPlayers'}}
+			<button class="btn btn-danger leavegame inlobby">{{_ "ui.button.game menu.leave game" }}</button>
+		{{else}}
+			<button class="btn btn-danger leavegame ingame">&#9632; {{_ "ui.button.game menu.leave game" }}</button>
+		{{/if}}
+	</div>
+</template>
+
+<template name="dummyBoxes">
+{{#if showDummyBoxes}}<div id="dummyBoxes">
+	{{_ "ui.label.names in group are random" }}<br>
+	{{#each dummyPlayers}}
+		<button class="secret tapToShow noSelect">{{name}}</button>
+		<div class="showHere">{{{knowingText}}}<button class="btn btn-danger closeDummyBox">{{_ "ui.button.game menu.close" }}</button></div>
+	{{/each}}
+</div>{{/if}}
+</template>
+
+<template name="infoBox">
+	<div id="infoBox">
+		{{#if isHost}}{{> hostBox}}{{/if}}
+		{{> gameInfo}}
+		<h5>{{_ "ui.title.what you know" }}</h5>
+		{{#if hideHostInfo}}
+			{{_ "ui.label.view your info below" }}
+		{{else}}
+			{{_ "ui.label.names in group are random" }}<br>
+			{{{knowingText}}}
+		{{/if}}
+	</div>
+
+	<div class="buttonrow">
+		<button id="toggleInfo" class="btn btn-warning">{{_ "ui.button.game menu.hide info" }}</button>
+		<button id="hideSelectedInfo" class="btn btn-warning">{{_ "ui.button.game menu.hide selected info" }}</button>
+		<button id="restoreInfo" class="btn btn-warning">{{_ "ui.button.game menu.restore info" }}</button>
+	</div>
+</template>
+
+<template name="openInfo">
+{{#unless hideOpenInfo}}
+<div id="openInfoBox">
+	<h5>{{_ "ui.title.open info" }}</h5>
+	{{#if isHost}}
+		<textarea id="openInfo">{{openInfo}}</textarea>
+	{{else}}
+		<textarea id="openInfo" readonly>{{openInfo}}</textarea>
+	{{/if}}
+</div>
+{{/unless}}
+</template>
+
+<template name="hostBox">
+<div id="hostBox">
+	{{_ "ui.label.you are host" }}
+</div>
+</template>
+
+<template name="gameInfo">
+<div id="gameInfo">
+	<ul class="options">
+		{{#if roleMapIsVisible}}<li>
+			<h5>{{_ "ui.title.role map" }}</h5>
+			<textarea id="roleMap" readonly>{{roleMap}}</textarea>
+		</li>{{/if}}
+		{{#if voteMapIsVisible}}<li>
+			<h5>{{_ "ui.title.vote map" }}</h5>
+			<textarea id="voteMap" readonly>{{voteMap}}</textarea>
+		</li>{{/if}}
+		{{#if themeMapIsVisible}}<li>
+			<h5>{{_ "ui.title.theme map" }}</h5>
+			<textarea id="themeMap" readonly>{{themeMap}}</textarea>
+		</li>{{/if}}
+	</ul>
+</div>
+</template>
+
+<template name="gameOptions">
+<div id="gameOptions">
+	<select id="optionTemplate">
+		{{#each templates}}
+			<option value="{{this.id}}">{{this.name}}</option>
+		{{/each}}
+	</select>
+	{{#if templateVariations}}
+	<select id="optionTemplateVariation">
+		{{#each templateVariations}}
+			<option value="{{this.index}}">{{this.name}}</option>
+		{{/each}}
+	</select>
+	{{/if}}
+	<ul class="options">
+		<li>
+			<h5>{{_ "ui.title.role map" }}</h5>
+
+			<textarea id="roleMap">{{roleMap}}</textarea>
+
+			<div id="roleMapNames">
+				{{#each pileList}}
+					<div class="pileName">{{name}}</div> <div class="pileCount">{{count}}</div>
+					<button id="addPileCount" data-line="{{index}}">+</button>
+					<button id="minusPileCount" data-line="{{index}}">-</button><br>
+				{{/each}}
+
+				{{#each roleMapNames}}
+					<div class="roleName">{{name}}</div> <div class="roleCount">{{count}}</div>
+					<button id="addRoleCount" data-line="{{index}}">+</button>
+					<button id="minusRoleCount" data-line="{{index}}">-</button><br>
+				{{/each}}
+			</div>
+
+			<div class="buttonrow">
+				<button id="hideShowRoleMap" class="btn btn-warning">{{#if roleMapIsVisible}}{{_ "ui.button.game menu.displayed" }}{{else}}{{_ "ui.button.game menu.hidden" }}{{/if}}</button>
+				<button id="updateRoleMap" class="btn btn-warning" disabled>{{_ "ui.button.game menu.update" }}</button>
+				<button id="switchRoleMapMode" class="btn btn-warning">{{_ "ui.button.game menu.switch mode" }}</button>
+			</div>
+		</li><li>
+			<h5>{{_ "ui.title.vote map" }}</h5>
+			<textarea id="voteMap">{{voteMap}}</textarea>
+			<div class="buttonrow">
+				<button id="hideShowVoteMap" class="btn btn-warning">{{#if voteMapIsVisible}}{{_ "ui.button.game menu.displayed" }}{{else}}{{_ "ui.button.game menu.hidden" }}{{/if}}</button>
+				<button id="updateVoteMap" class="btn btn-warning" disabled>{{_ "ui.button.game menu.update" }}</button>
+			</div>
+		</li><li>
+			<h5>{{_ "ui.title.theme map" }}</h5>
+			<textarea id="themeMap">{{themeMap}}</textarea>
+			<div class="buttonrow">
+				<button id="hideShowThemeMap" class="btn btn-warning">{{#if themeMapIsVisible}}{{_ "ui.button.game menu.displayed" }}{{else}}{{_ "ui.button.game menu.hidden" }}{{/if}}</button>
+				<button id="updateThemeMap" class="btn btn-warning" disabled>{{_ "ui.button.game menu.update" }}</button>
+			</div>
+		</li>
+	</ul>
+</div>
+</template>
+
+<template name="choiceBox">
+{{#if choiceTypes}}
+<div id="choiceBox">
+	{{#if noChoiceType}}
+		{{_ "ui.label.last choice results" }}: {{lastChoiceResult}}<br>
+
+		{{#if isHost}}
+			<select id="optionChoiceType">
+				{{#each choiceTypes}}
+					<option value="{{this}}">{{this}}</option>
+				{{/each}}
+			</select>
+			<button id="updateChoiceType" class="btn btn-info">{{_ "ui.button.game menu.start secret voting" }}</button>
+		{{/if}}
+	{{else}}
+		{{#if shouldShowChoicePlayer}}
+			{{_ "ui.label.names players choices submitted" }} - {{playersChoicesSubmitted}}<br>
+			{{_ "ui.label.names players choices not submitted" }} - {{playersChoicesNotSubmitted}}<br>
+			{{_ "ui.label.names players choices cannot be submitted" }} - {{playersChoicesCantSubmit}}<br>
+		{{else}}
+			{{_ "ui.label.number choices submitted" }}: {{numChoicesSubmitted}}<br>
+		{{/if}}
+
+		{{#unless isDead}}
+			{{_ "ui.label.may resubmit choice" }}<br>
+
+			<select id="optionChoice">
+				{{#each choices}}
+					<option value="{{this}}">{{this}}</option>
+				{{/each}}
+			</select>
+			<button id="updateChoice" class="btn btn-warning" disabled>{{_ "ui.button.game menu.update" }}</button>
+		{{/unless}}
+
+		{{#if isHost}}<br>
+			<button id="removeChoiceType" class="btn btn-info" data-clickcount="0">{{_ "ui.button.game menu.end secret voting" }}</button>
+			<button id="restartChoiceType" class="btn btn-info" data-clickcount="0">{{_ "ui.button.game menu.restart secret voting" }}</button>
+		{{/if}}
+	{{/if}}
+</div>
+{{/if}}
+</template>
+
+<template name="timeBox">
+{{#unless hideTimeBox}}
+<div id="timeBox">
+	{{{ timeToShow }}}
+	{{#if isHost}}
+		<button id="toggleTimer" class="btn btn-info">{{#if gamePaused}}{{_ "ui.button.game menu.start stopwatch" }}{{else}}{{_ "ui.button.game menu.pause stopwatch" }}{{/if}}</button>
+		<button id="resetTimer" class="btn btn-info">{{_ "ui.button.game menu.reset stopwatch" }}</button>
+	{{else}}
+		{{#if gamePaused}} ({{_ "ui.game info.paused" }}){{/if}}
+	{{/if}}
+</div>
+{{/unless}}
+</template>
+
+<template name="randomBox">
+{{#unless hideRandomBox}}
+<div id="randomBox">
+	{{#if isHost}}<button id="chooseRandomPlayer" class="btn btn-warning">{{_ "ui.button.game menu.choose random player" }}</button>{{/if}}
+	{{_ "ui.label.chosen player" }}: {{randomPlayer}}
+</div>
+{{/unless}}
+</template>
+
+<template name="soundBox">
+{{#unless hideSoundBox}}
+<div id="soundBox">
+	<button id="playSound" class="btn btn-warning">{{_ "ui.button.game menu.play sound" }}</button>
+</div>
+{{/unless}}
+</template>
+
+<template name="hostDisplayBox">
+{{#if isHost}}
+<div id="hostDisplayBox">
+	<div class="buttonrow">
+		<button id="hideOpenInfo" class="btn btn-info">{{#if hideOpenInfo}}{{_ "ui.button.host menu.display open info" }}{{else}}{{_ "ui.button.host menu.hide open info" }}{{/if}}</button>
+		<button id="hideTimeBox" class="btn btn-info">{{#if hideTimeBox}}{{_ "ui.button.host menu.display time box" }}{{else}}{{_ "ui.button.host menu.hide time box" }}{{/if}}</button>
+		<button id="hideRandomBox" class="btn btn-info">{{#if hideRandomBox}}{{_ "ui.button.host menu.display random box" }}{{else}}{{_ "ui.button.host menu.hide random box" }}{{/if}}</button>
+		<button id="hideSoundBox" class="btn btn-info">{{#if hideSoundBox}}{{_ "ui.button.host menu.display sound box" }}{{else}}{{_ "ui.button.host menu.hide sound box" }}{{/if}}</button>
+		<button id="hidePlayerList" class="btn btn-info">{{#if hidePlayerList}}{{_ "ui.button.host menu.display player list" }}{{else}}{{_ "ui.button.host menu.hide player list" }}{{/if}}</button>
+		<button id="hideLog" class="btn btn-info">{{#if hideLog}}{{_ "ui.button.host menu.display log" }}{{else}}{{_ "ui.button.host menu.hide log" }}{{/if}}</button>
+		<button id="preventSwapping" class="btn btn-info">{{#if preventSwapping}}{{_ "ui.button.host menu.allow swapping" }}{{else}}{{_ "ui.button.host menu.prevent swapping" }}{{/if}}</button>
+		<button id="preventPeeking" class="btn btn-info">{{#if preventPeeking}}{{_ "ui.button.host menu.allow peeking" }}{{else}}{{_ "ui.button.host menu.prevent peeking" }}{{/if}}</button>
+		<button id="preventSendAsRole" class="btn btn-info">{{#if preventSendAsRole}}{{_ "ui.button.host menu.allow send msg as role" }}{{else}}{{_ "ui.button.host menu.prevent send msg as role" }}{{/if}}</button>
+		<button id="preventSendToHost" class="btn btn-info">{{#if preventSendToHost}}{{_ "ui.button.host menu.allow send msg to host" }}{{else}}{{_ "ui.button.host menu.prevent send msg to host" }}{{/if}}</button>
+	</div>
+</div>
+{{/if}}
+</template>
+
+<template name="chat">
+<div id="chat">
+	<input type="text" id="msg" name="msg" placeholder='{{_ "ui.form.enter msg.placeholder" }}'>
+	<button id="sendmsg" class="btn btn-warning">&gt;</button>
+	{{#unless preventSendAsRole}}{{#unless isGameState 'waitingForPlayers'}}<input type="checkbox" id="showRole" name="showRole" value="1" /><span style="color:red;">{{_ "ui.label.send as your role" }}</span>{{/unless}}{{/unless}}
+	{{#unless preventSendToHost}}{{#unless isHost}}<input type="checkbox" id="toHost" name="toHost" value="1" />{{_ "ui.label.send only to host" }}{{/unless}}{{/unless}}
+	<ul>
+	{{#each messages}}
+		<li>
+			{{sender}}{{#if isPrivate}} (private){{/if}}: {{content}} <em>{{formatTime createdAt}}</em>
+		</li>
+	{{/each}}
+	</ul>
+</div>
+
+<div class="buttonrow">
+	<button id="toggleChat" class="btn btn-warning">{{_ "ui.button.game menu.hide chat" }}</button>
+</div>
+</template>
+
+<template name="log">
+{{#unless hideLog}}
+<div id="log">
+{{#if logs}}
+	<ul>
+	{{#each logs}}
+		<li>{{{content}}}</li>
+	{{/each}}
+	</ul>
+{{else}}
+	{{_ "ui.label.no logs" }}
+{{/if}}
+</div>
+{{/unless}}
+</template>
+
+<template name="token">
+	<li class="token">
+		{{name}}: {{_ role.name}}
+		{{#if isYou _id}}({{_ "ui.player info.you"}}){{/if}}
+		{{#if equals isHost true}}({{_ "ui.player info.host"}}){{/if}}
+	</li>
+</template>
+
+<template name="tooltippy">
+	<button class="btn-tooltip" data-tooltip="{{_ text}}" data-tooltip-direction="e"></button>
+</template>
+
+<template name="ruleBox">
+<div id="ruleBox">
+	<div class="buttonrow">
+		<button id="toggleIntro" class="btn btn-primary">{{_ "ui.button.start menu.intro" }}</button>
+		<button id="toggleRules" class="btn btn-primary">{{_ "ui.button.start menu.rules" }}</button>
+		<button id="toggleGuide" class="btn btn-primary">{{_ "ui.button.start menu.guide" }}</button>
+	</div>
+	{{> introContent}}
+	{{> ruleContent}}
+	{{> guideContent}}
+</div>
+</template>
+
+<template name="footer">
+<div id="footer">
+	Version {{versionNo}}.
+	Copyright &copy; 2015 Zenador. <span id="usurp" data-clickcount="0">All rights reserved.</span> Free to use.<br>
+	<a href="http://codenamesgame.herokuapp.com/" target="_blank">Codenames</a> | <a href="http://quiztimegame.herokuapp.com/" target="_blank">Psych/Fibbage</a> | <a href="http://perceivegame.herokuapp.com/" target="_blank">Perceive</a>
+</div>
+</template>

@@ -1,0 +1,182 @@
+{
+	"ui": {
+		"server connect error": "Sorry, could not connect to server. Please try again later.",
+		"validation": {
+			"form": {
+				"player name": "Please enter a player name.",
+				"player name taken": "Please choose another name, a player with the same name is already in the game.",
+				"access code": "Sorry, your game access code is invalid.",
+				"player access code": "Sorry, your player access code is invalid.",
+				"game room locked": "Sorry, you can't join this game as the host has locked the room.",
+				"game already started": "Sorry, you can't join a game after it has already started."
+			},
+			"start game wrong player number": "The number of players in this game (__playercount__) doesn't match the number of roles included (__rolecount__).",
+			"usurp code": "Secret: %s"
+		},
+		"form": {
+			"player name": {
+				"placeholder": "Your Name"
+			},
+			"dummy player name": {
+				"placeholder": "New Player Name"
+			},
+			"access code": {
+				"placeholder": "Game Access Code"
+			},
+			"player access code": {
+				"placeholder": "Player Access Code"
+			},
+			"enter msg": {
+				"placeholder": "enter your msg here"
+			},
+			"player open info": {
+				"placeholder": "Your Open Info"
+			}
+		},
+		"title": {
+			"game title": "Night Phase",
+			"game subtitle": "",
+			"online": "Online",
+			"offline": "Offline",
+			"game over": "Game Over!",
+			"original list": "Original List",
+			"access code": "Game Access Code",
+			"player access code": "Player Access Code",
+			"players": "Players",
+			"game options": "Game Options",
+			"templates": "Select Template",
+			"current roles": "Current Roles",
+			"role map": "Roles",
+			"vote map": "Ballots",
+			"theme map": "Themes",
+			"what you know": "What you know",
+			"open info": "Open Information",
+			"empty": "None",
+			"randomise": "Randomly assign roles to players",
+			"no of players": "Number of Players",
+			"list of roles": "List of Roles"
+		},
+		"button": {
+			"start menu": {
+				"new game": "New Game",
+				"join game": "Join Game",
+				"resume game": "Try to Resume Game",
+				"rejoin game": "Rejoin Game",
+				"play game": "Play Game",
+				"randomise": "Randomise",
+				"go shuffle": "Go!",
+				"back to menu": "Back",
+				"intro": "Introduction",
+				"rules": "How to Host",
+				"guide": "How to Use"
+			},
+			"game menu": {
+				"start game": "Start Game",
+				"end game": "End Game",
+				"leave game": "Leave Game",
+				"prepare game": "Prepare Game",
+				"hide info": "Hide Info",
+				"show info": "Show Info",
+				"hide selected info": "Hide Selected Info",
+				"restore info": "Restore Info",
+				"hide access": "Hide Access",
+				"show access": "Show Access",
+				"hide chat": "Hide Chat",
+				"show chat": "Show Chat",
+				"toggle player death state": "un/dead",
+				"update": "Update",
+				"close": "Close",
+				"switch mode": "Switch Mode",
+				"displayed": "Displayed",
+				"hidden": "Hidden",
+				"swap roles": "Swap Roles",
+				"peek role": "Peek at Role",
+				"start secret voting": "Start Secret Voting",
+				"end secret voting": "End Secret Voting",
+				"restart secret voting": "Restart Secret Voting",
+				"start stopwatch": "Start/Resume Stopwatch",
+				"pause stopwatch": "Pause Stopwatch",
+				"reset stopwatch": "Reset Stopwatch",
+				"choose random player": "Choose Random Player",
+				"play sound": "Play Sound"
+			},
+			"host menu": {
+				"display open info": "Display Open Info",
+				"display time box": "Display Time Box",
+				"display random box": "Display Random Box",
+				"display sound box": "Display Sound Box",
+				"display player list": "Display Player List",
+				"display log": "Display Log",
+				"allow swapping": "Allow Swapping",
+				"allow peeking": "Allow Peeking",
+				"allow send msg as role": "Allow Send Message as Role",
+				"allow send msg to host": "Allow Send Message to Host",
+				"hide open info": "Hide Open Info",
+				"hide time box": "Hide Time Box",
+				"hide random box": "Hide Random Box",
+				"hide sound box": "Hide Sound Box",
+				"hide player list": "Hide Player List",
+				"hide log": "Hide Log",
+				"prevent swapping": "Prevent Swapping",
+				"prevent peeking": "Prevent Peeking",
+				"prevent send msg as role": "Prevent Send Message as Role",
+				"prevent send msg to host": "Prevent Send Message to Host"
+			},
+			"confirm": "Confirm"
+		},
+		"label": {
+			"access link": "Link to share this game",
+			"telegram link": "Telegram Link",
+			"names in group are random": "(Names mentioned in a group are in random order.)",
+			"view your info below": "Please view your info in the boxes below.",
+			"you are host": "You are the game host.",
+			"select choice": "Select Choice",
+			"last choice results": "Last choice results",
+			"names players choices submitted": "Players who have submitted choices so far",
+			"names players choices not submitted": "Players who have not submitted choices",
+			"names players choices cannot be submitted": "Players who cannot submit choices",
+			"number choices submitted": "Number of submitted choices so far",
+			"may resubmit choice": "You may resubmit your choice to override your last selection.",
+			"chosen player": "Chosen Player",
+			"send as your role": "Send as your role",
+			"send only to host": "Send only to host",
+			"no logs": "No logs yet."
+		},
+		"dialog": {
+			"host close window": "As you are the game host, please manually leave the game first to avoid causing problems for the other users.",
+			"player close window": "If you want to leave the game, please press the 'Leave Game' button first. Otherwise, you will remain in the game, just open another window in the same browser to resume.",
+			"player leave game": "Are you sure you want to leave?",
+			"transfer host": "Are you sure you want to make %s the new game host?",
+			"remove player": "Are you sure you want to remove %s from the game?",
+			"swap player roles": "Are you sure you want to swap the roles of players __player1__ and __player2__?",
+			"peek player role": "Are you sure you want to peek at the role of player %s?",
+			"share box info": "Are you sure you want to display this info to the other players?",
+			"role of this player is": "__name__'s role: __role__",
+			"show game log": "Are you sure you want to show the game log?"
+		},
+		"player info": {
+			"host": "host",
+			"dead": "dead",
+			"you": "you",
+			"teleconnected": "Connected on Telegram"
+		},
+		"game info": {
+			"locked": "Locked",
+			"open": "Open",
+			"paused": "paused"
+		},
+		"log": {
+			"swapped player roles": "__player__ swapped the roles of __player1__ and __player2__.",
+			"peeked player role": "__actionPlayer__ eeked at the role of __targetPlayer__."
+		}
+	},
+	"telegram": {
+		"event": {
+			"who has voted": "Who has voted so far:",
+			"new voting round": "New voting round: please cast your vote:",
+			"voting results": "Voting results:",
+			"reset voting round": "The current voting round has been reset. Please cast your vote:",
+			"game ended": "The game has ended. Here is the original role list:"
+		}
+	}
+}
