@@ -778,7 +778,7 @@ function assignPlayers(players, rollyDict, pileList, themes) {
 
 	for (var key in rollyDict) {
 		var dictItem = rollyDict[key];
-		if (dictItem.name == "<>") {
+		if (dictItem.name == "<Theme>") {
 			var randIndex = getRandom(themes.length);
 			//dictItem["name"] = themes[randIndex];
 			dictItem.name = themes[randIndex];

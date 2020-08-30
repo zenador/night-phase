@@ -1,0 +1,23 @@
+{
+  "name": "night-phase",
+  "version": "1.0.0",
+  "description": "This is designed as a complement to some tabletop games (hidden roles / social deduction). It is not meant to be played entirely online, or to completely replace a physical copy of the game, but to be used as a tool with your gaming group to streamline parts of the game or save paper.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/zenador/night-phase.git"
+  },
+  "author": "Zenador",
+  "license": "MIT",
+  "homepage": "https://github.com/zenador/night-phase#readme",
+  "dependencies": {
+    "@babel/runtime": "^7.11.2"
+  }
+}

@@ -167,7 +167,7 @@
 		},
 		"log": {
 			"swapped player roles": "__player__ swapped the roles of __player1__ and __player2__.",
-			"peeked player role": "__actionPlayer__ eeked at the role of __targetPlayer__."
+			"peeked player role": "__actionPlayer__ peeked at the role of __targetPlayer__."
 		}
 	},
 	"telegram": {
